@@ -1,5 +1,7 @@
+import { useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "../icons/TrashIcon";
 import { Column, Id } from "../types"
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props{
     column: Column;
@@ -9,7 +11,45 @@ interface Props{
 function ColumnContainer(props: Props) {
   const {column, deleteColumn} = props;
 
-    return (<div className="
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+    id: column.id,
+    data: {
+        type: "Column",
+        column
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  if (isDragging){
+    return <div 
+    ref={setNodeRef} 
+    style={style}
+    className="
+        bg-cloumnBackgroundColor
+        opacity-40
+        border-2
+        border-rose-500
+        w-[350px]
+        h-[500px]
+        max-h-[500px]
+        rounded-md
+        flex
+        flex-col
+    "        
+    >
+
+    </div>
+  }
+
+    return (
+    <div 
+    ref={setNodeRef}
+    style={style}
+    className="
         bg-cloumnBackgroundColor
         w-[350px]
         h-[500px]
@@ -20,20 +60,23 @@ function ColumnContainer(props: Props) {
         "        
         >
             {/* Titulo da coluna*/}
-            <div className="
-            bg-mainBackGoundColor
-            text-md
-            h-[60px]
-            cursor-grab
-            rounded-md
-            rounded-b-none
-            p-3
-            font-bold
-            border-cloumnBackgroundColor
-            border-4
-            flex
-            items-center
-            justify-between
+            <div 
+            {...attributes}
+            {...listeners}            
+            className="
+                bg-mainBackGoundColor
+                text-md
+                h-[60px]
+                cursor-grab
+                rounded-md
+                rounded-b-none
+                p-3
+                font-bold
+                border-cloumnBackgroundColor
+                border-4
+                flex
+                items-center
+                justify-between
             "
             >
                 <div className="

@@ -1,11 +1,17 @@
 import PlusIcon from '../icons/PlusIcon'
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Column, Id } from '../types';
 import ColumnContainer from './ColumnContainer';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext} from '@dnd-kit/sortable';
+import { createPortal } from 'react-dom';
 
 function KanbanBorder() {
   const [columns, setColumns] = useState<Column[]>([]);
-  console.log(columns);
+  const  columnsId = useMemo(() => columns.map(col => col.id),
+  [columns]);
+
+  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   return (
     <div className="
@@ -19,13 +25,19 @@ function KanbanBorder() {
         px-[40px]
     "
     >
+      <DndContext 
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}>
       <div className="m-auto flex gap-4">
-        <div className="flex gap-4">{columns.map((col) => (
+        <div className="flex gap-4">
+          <SortableContext items={columnsId}>
+          {columns.map((col) => (
           <ColumnContainer 
           key={col.id} 
           column={col} 
           deleteColumn={deleteColumn}/>
           ))}
+          </SortableContext>
       </div>
         <button 
         onClick={() =>{
@@ -49,6 +61,14 @@ function KanbanBorder() {
             <PlusIcon />
             Adicionar coluna</button>     
       </div>
+        {createPortal (<DragOverlay>
+          {activeColumn && <ColumnContainer column={activeColumn}
+          deleteColumn={deleteColumn}
+          />}
+        </DragOverlay>, 
+        document.body
+      )}
+      </DndContext>
     </div>
   );
   function createNewColumn() {
@@ -61,6 +81,32 @@ function KanbanBorder() {
   function deleteColumn(id: Id) {
     const filteredColumns = columns.filter((col) => col.id !== id);
     setColumns(filteredColumns);
+  }
+
+  function onDragStart(event: DragStartEvent) {
+    if (event.active.data.current?.type === "Column"){
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
+  }
+  function onDragEnd(event: DragEndEvent) {
+    const {active, over} = event;
+    
+    if (!over) return;
+    
+    const activeColumnId = active.id;
+    const overColumnId = over.id;
+    
+    if (activeColumnId === overColumnId) return;
+
+    setColumns(columns => {
+      const activeColumnIndex = columns.findIndex(col => col.id === activeColumnId);
+
+      const overColumnIndex = columns.findIndex(col => col.id === overColumnId);
+      
+      return arrayMove(columns, activeColumnIndex, overColumnIndex)
+    })
+
   }
 }
 
