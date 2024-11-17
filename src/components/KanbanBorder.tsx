@@ -2,7 +2,7 @@ import PlusIcon from '../icons/PlusIcon'
 import { useMemo, useState } from 'react';
 import { Column, Id } from '../types';
 import ColumnContainer from './ColumnContainer';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext} from '@dnd-kit/sortable';
 import { createPortal } from 'react-dom';
 
@@ -12,6 +12,12 @@ function KanbanBorder() {
   [columns]);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+
+  const sensors = useSensors(useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 3
+    }
+  }))
 
   return (
     <div className="
@@ -26,6 +32,7 @@ function KanbanBorder() {
     "
     >
       <DndContext 
+      sensors={sensors}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}>
       <div className="m-auto flex gap-4">
