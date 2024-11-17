@@ -2,21 +2,33 @@ import { useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "../icons/TrashIcon";
 import { Column, Id } from "../types"
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 
 interface Props{
     column: Column;
     deleteColumn: (id:Id) => void;
+    updateColumn: (id: Id, title: string) => void;
 }
 
 function ColumnContainer(props: Props) {
-  const {column, deleteColumn} = props;
+  const {column, deleteColumn, updateColumn} = props;
 
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+  const [ editMode, setEditMode] = useState(false);
+
+  const { 
+    setNodeRef, 
+    attributes, 
+    listeners, 
+    transform, 
+    transition, 
+    isDragging 
+} = useSortable({
     id: column.id,
     data: {
         type: "Column",
         column
     },
+    disabled: editMode,
   });
 
   const style = {
@@ -62,7 +74,8 @@ function ColumnContainer(props: Props) {
             {/* Titulo da coluna*/}
             <div 
             {...attributes}
-            {...listeners}            
+            {...listeners}
+            onClick={() => {setEditMode(true)}}            
             className="
                 bg-mainBackGoundColor
                 text-md
@@ -95,9 +108,30 @@ function ColumnContainer(props: Props) {
                     rounded-full
                     "
                     >0
-                    </div>
-                
-                {column.title}
+                    </div>               
+                {!editMode && column.title}
+                {editMode && (
+                    <input 
+                    className="
+                        bg-black
+                        focus:border-rose-500
+                        border
+                        rounded
+                        outline-none
+                        px-2
+                    "
+                    value={column.title}
+                    onChange={(e) => updateColumn(column.id, e.target.value)}
+                    autoFocus
+                    onBlur={() => {setEditMode(false);
+
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key !== "Enter") return;
+                        setEditMode(false);
+                    }}
+                    />
+                )}
                 </div>
                 <button 
                 onClick={() => {

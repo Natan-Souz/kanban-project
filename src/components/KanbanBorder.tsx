@@ -34,7 +34,8 @@ function KanbanBorder() {
       <DndContext 
       sensors={sensors}
       onDragStart={onDragStart}
-      onDragEnd={onDragEnd}>
+      onDragEnd={onDragEnd}
+      >
       <div className="m-auto flex gap-4">
         <div className="flex gap-4">
           <SortableContext items={columnsId}>
@@ -42,7 +43,9 @@ function KanbanBorder() {
           <ColumnContainer 
           key={col.id} 
           column={col} 
-          deleteColumn={deleteColumn}/>
+          deleteColumn={deleteColumn}
+          updateColumn={updateColumn}
+          />
           ))}
           </SortableContext>
       </div>
@@ -69,8 +72,10 @@ function KanbanBorder() {
             Adicionar coluna</button>     
       </div>
         {createPortal (<DragOverlay>
-          {activeColumn && <ColumnContainer column={activeColumn}
+          {activeColumn && <ColumnContainer 
+          column={activeColumn}
           deleteColumn={deleteColumn}
+          updateColumn={updateColumn}
           />}
         </DragOverlay>, 
         document.body
@@ -88,6 +93,15 @@ function KanbanBorder() {
   function deleteColumn(id: Id) {
     const filteredColumns = columns.filter((col) => col.id !== id);
     setColumns(filteredColumns);
+  }
+
+  function updateColumn(id: Id, title: string){
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return {...col, title};
+    });
+
+    setColumns(newColumns);
   }
 
   function onDragStart(event: DragStartEvent) {
