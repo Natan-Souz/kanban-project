@@ -77,11 +77,10 @@ function KanbanBorder() {
       </div>
         {createPortal (<DragOverlay>
           {activeColumn && <ColumnContainer 
-          column={activeColumn}
-          deleteColumn={deleteColumn}
-          updateColumn={updateColumn}
-          createTask={createTask}
-          />}
+            column={activeColumn}
+            deleteColumn={deleteColumn}
+            updateColumn={updateColumn}
+            createTask={createTask} tasks={[]}/>}
         </DragOverlay>, 
         document.body
       )}
