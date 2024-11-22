@@ -27,9 +27,7 @@ function TaskCard({ task, deleteTask }: Props) {
       cursor-grabs
       relative
     "
-    onClick={() => {
-      deleteTask(task.id)
-    }}
+    
     onMouseEnter={() => {
       setMouseIsOver(true);
     }}
@@ -39,7 +37,11 @@ function TaskCard({ task, deleteTask }: Props) {
     > 
     {task.content}
       
-      {mouseisOver && (<button className="
+      {mouseisOver && (<button 
+      onClick={() => {
+        deleteTask(task.id)
+      }}
+      className="
       stroke-white
       absolute
       right-4
