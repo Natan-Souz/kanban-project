@@ -1,50 +1,32 @@
-# React + TypeScript + Vite
+# Gestor de tarefas Kanban
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Kanban é uma metodologia de gestão visual que ajuda a melhorar a eficiencia de uma organização. Essa metologia nos permite observarmos visualmente o status das tarefas e em qual passo elas estão.
 
-Currently, two official plugins are available:
+## 🚀 Começando
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Essas instruções permitirão que você obtenha uma cópia do projeto em operação na sua máquina local para fins de desenvolvimento e teste.
 
-## Expanding the ESLint configuration
+### 📋 Pré-requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+De que coisas você precisa para instalar o software e como instalá-lo?
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+1. Cópia do repositório do projeto
+  Ex: "git clone https://github.com/Natan-Souz/kanban-project.git";
+2. Node.js na versão v22.10.0 ou superior;
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 🔧 Instalação
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+A instalação dos módulos adicionais do projeto podem ser feita pelo seguinte comando:
+```
+Dentro da pasta do projeto execute o seguinte comando no terminal:
+  - npm install
+```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+Após a instalação dos módulos adicionas usados, execute o projeto com o seguinte comando :
+
+```
+Ainda dentro da pasta do projeto, execute o seguinte comando dentro do terminal:
+  - npm run dev
 ```
