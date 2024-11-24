@@ -2,9 +2,10 @@ import PlusIcon from '../icons/PlusIcon'
 import { useMemo, useState } from 'react';
 import { Column, Id, Task } from '../types';
 import ColumnContainer from './ColumnContainer';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext} from '@dnd-kit/sortable';
 import { createPortal } from 'react-dom';
+import TaskCard from './TaskCard';
 
 function KanbanBorder() {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -12,6 +13,8 @@ function KanbanBorder() {
   [columns]);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+
+  const [activeTask, setActiveTask] = useState <Task | null>(null);
 
   const [tasks, setTasks] = useState<Task[]>([])
 
@@ -37,6 +40,7 @@ function KanbanBorder() {
       sensors={sensors}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
       >
       <div className="m-auto flex gap-4">
         <div className="flex gap-4">
@@ -84,8 +88,14 @@ function KanbanBorder() {
             updateColumn={updateColumn}
             createTask={createTask} 
             updateTask={updateTask}
-            tasks={[]}
-            deleteTask={deleteTask}/>}
+            deleteTask={deleteTask}
+            tasks={tasks.filter(
+              (task) => task.columnId === activeColumn.id
+            )}
+            />
+            }
+            {activeTask && <TaskCard task={activeTask} 
+            deleteTask={deleteTask} updateTask={updateTask}/>}
         </DragOverlay>, 
         document.body
       )}
@@ -127,6 +137,9 @@ function KanbanBorder() {
   function deleteColumn(id: Id) {
     const filteredColumns = columns.filter((col) => col.id !== id);
     setColumns(filteredColumns);
+
+    const newTasks = tasks.filter((t) => t.columnId !== id);
+    setTasks(newTasks);
   }
 
   function updateColumn(id: Id, title: string){
@@ -143,10 +156,15 @@ function KanbanBorder() {
       setActiveColumn(event.active.data.current.column);
       return;
     }
+    if (event.active.data.current?.type === "Task"){
+      setActiveTask(event.active.data.current.task);
+      return;
   }
+}
   function onDragEnd(event: DragEndEvent) {
+    setActiveColumn(null);
+    setActiveTask(null);
     const {active, over} = event;
-    
     if (!over) return;
     
     const activeColumnId = active.id;
@@ -163,7 +181,49 @@ function KanbanBorder() {
     })
 
   }
+  function onDragOver(event: DragOverEvent){
+    const {active, over} = event;
+    if (!over) return;
+    
+    const activeId = active.id;
+    const overId = over.id;
+    
+    if (activeId === overId) return;
+  
+    const isActiveATask = active.data.current?.type === "Task";
+    const isOverATask = over.data.current?.type === "Task";
+
+    if(!isActiveATask) return;
+  
+    
+    //Soltar a tarefa sobre uma tarefa
+    if(isActiveATask && isOverATask){
+      setTasks(tasks =>{
+      const activeIndex = tasks.findIndex(t => t.id === activeId);
+      const overIndex = tasks.findIndex(t => t.id === overId);
+
+      tasks[activeIndex].columnId = tasks[overIndex].columnId;
+      return arrayMove(tasks, activeIndex, overIndex);
+      })
+    }
+    const isOverAColumn = over.data.current?.type === "Column";
+  
+    //Soltar uma tarefa sobre uma coluna
+    if (isActiveATask && isOverAColumn){
+        setTasks(tasks =>{
+        const activeIndex = tasks.findIndex(t => t.id === activeId);
+        tasks[activeIndex].columnId = overId
+        
+
+        return arrayMove(tasks, activeIndex, activeIndex);
+      })
+
+    }
+    
+  }
 }
+
+
 
 function generateId() {
   return Math.floor(Math.random() * 10001);
