@@ -48,6 +48,7 @@ function KanbanBorder() {
           deleteColumn={deleteColumn}
           updateColumn={updateColumn}
           createTask={createTask}
+          updateTask={updateTask}
           deleteTask={deleteTask}
           tasks={tasks.filter(task => task.columnId === col.id)}
           />
@@ -82,6 +83,7 @@ function KanbanBorder() {
             deleteColumn={deleteColumn}
             updateColumn={updateColumn}
             createTask={createTask} 
+            updateTask={updateTask}
             tasks={[]}
             deleteTask={deleteTask}/>}
         </DragOverlay>, 
@@ -99,6 +101,15 @@ function KanbanBorder() {
     };
 
     setTasks([...tasks, newTask]);
+  }
+
+  function updateTask (id: Id, content: string){
+    const newTasks = tasks.map(task => {
+      if (task.id !== id) return task;
+      return {...task, content};
+    });
+
+    setTasks(newTasks);
   }
 
   function deleteTask(id:Id) {

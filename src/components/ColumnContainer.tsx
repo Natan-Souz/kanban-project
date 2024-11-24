@@ -12,13 +12,15 @@ interface Props{
     updateColumn: (id: Id, title: string) => void;
 
     createTask: (columnId: Id) => void;
+    updateTask: (id: Id, content: string) => void;  
     deleteTask: (id:Id) => void;
     tasks: Task[];
+
 
 }
 
 function ColumnContainer(props: Props) {
-  const {column, deleteColumn, updateColumn, createTask, tasks, deleteTask} = props;
+  const {column, deleteColumn, updateColumn, createTask, tasks, deleteTask, updateTask} = props;
 
   const [ editMode, setEditMode] = useState(false);
 
@@ -170,7 +172,11 @@ function ColumnContainer(props: Props) {
             "
             >{
                 tasks.map((task) => (
-                    <TaskCard key={task.id} task={task} deleteTask={deleteTask}/>
+                    <TaskCard 
+                        key={task.id} 
+                        task={task} 
+                        deleteTask={deleteTask}
+                        updateTask={updateTask}/>
                 ))
             }</div>
             {/* rodapé*/}
